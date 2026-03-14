@@ -14,11 +14,18 @@ import {
  * such as `createdAt: timestamp("created_at")`,
  * but not for single-word fields like `id: serial()` */
 
+export const userRole = pgEnum("user_role", [
+  "superadmin",
+  "admin",
+  "user",
+]);
+
 export const users = pgTable("users", {
   id: serial().primaryKey(),
   name: text().notNull(),
   email: text().notNull().unique(),
   password: text().notNull(),
+  role: userRole().notNull().default("user"),
   pointsTotal: integer("points_total").notNull().default(0),
   pointsBalance: integer("points_balance").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
