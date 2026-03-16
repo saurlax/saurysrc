@@ -9,8 +9,6 @@ const bodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  console.log(body);
-  
   const { email, password } = bodySchema.parse(body);
 
   const [user] = await db
@@ -18,7 +16,7 @@ export default defineEventHandler(async (event) => {
     .from(schema.users)
     .where(eq(schema.users.email, email));
 
-  if (!user || !(await verifyPassword(password, user.password))) {
+  if (!user || !(await verifyPassword(user.password, password))) {
     throw createError({
       statusCode: 401,
       message: "Invalid email or password",
@@ -26,8 +24,10 @@ export default defineEventHandler(async (event) => {
   }
 
   return await setUserSession(event, {
-    id: user.id,
-    name: user.name,
-    role: user.role,
+    user: {
+      id: user.id,
+      name: user.name,
+      role: user.role,
+    },
   });
 });
