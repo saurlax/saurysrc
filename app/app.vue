@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import * as locales from "@nuxt/ui/locale";
+const { locale } = useI18n();
 const { site } = useAppConfig();
 
 useHead({
@@ -8,7 +10,7 @@ useHead({
 </script>
 
 <template>
-  <UApp>
+  <UApp :locale="locales[locale]">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -18,4 +20,8 @@ useHead({
 <style>
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+@theme {
+  --color-primary: #1a8cff;
+}
 </style>

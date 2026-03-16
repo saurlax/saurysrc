@@ -16,7 +16,10 @@ export default defineNuxtConfig({
     db: "postgresql",
   },
   i18n: {
-    defaultLocale: "zh",
-    locales: ["zh"],
+    defaultLocale: "zh_cn",
+    locales: ["zh_cn"],
+  },
+  routeRules: {
+    "/console/**": { appLayout: "console" },
   },
 });

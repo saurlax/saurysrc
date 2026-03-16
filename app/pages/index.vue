@@ -2,9 +2,7 @@
 const { data: announcements } = await useFetch("/api/announcements");
 const { data: vulnerabilities } = await useFetch("/api/vulnerabilities");
 
-const announcementColumns = [
-  { accessorKey: "title", header: "标题" },
-];
+const announcementColumns = [{ accessorKey: "title", header: "标题" }];
 
 const vulnerabilityColumns = [
   { accessorKey: "title", header: "标题" },
@@ -15,7 +13,7 @@ const vulnerabilityColumns = [
 
 <template>
   <UPageCard
-    class="my-4"
+    class="my-8"
     title="最新公告"
     description="展示最近发布的公告。"
     variant="naked"
