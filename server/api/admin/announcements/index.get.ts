@@ -9,12 +9,13 @@ export default defineEventHandler(async (event) => {
 
   return db
     .select({
-      id: schema.teams.id,
-      name: schema.teams.name,
-      points: schema.teams.pointsTotal,
+      id: schema.announcements.id,
+      title: schema.announcements.title,
+      pinned: schema.announcements.pinned,
+      createdAt: schema.announcements.createdAt,
     })
-    .from(schema.teams)
-    .orderBy(desc(schema.teams.pointsTotal))
+    .from(schema.announcements)
+    .orderBy(desc(schema.announcements.pinned), desc(schema.announcements.createdAt))
     .limit(limit)
     .offset(offset);
 });

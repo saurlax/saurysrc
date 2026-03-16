@@ -52,9 +52,7 @@ const navItems = computed(() => {
           <UNavigationMenu :items="navItems" orientation="vertical" />
         </UPageAside>
       </template>
-      <UPageBody>
-        <slot />
-      </UPageBody>
+      <slot />
     </UPage>
   </NuxtLayout>
 </template>
