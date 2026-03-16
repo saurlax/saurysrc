@@ -3,17 +3,12 @@ const { user, clear: logout } = useUserSession();
 
 const { site } = useAppConfig();
 
-const navItems = computed(() => {
-  const items = [
-    { label: "公告", to: "/announcements" },
-    { label: "漏洞", to: "/vulnerabilities" },
-    { label: "排行榜", to: "/leaderboard" },
-  ];
-  if (["superadmin", "admin"].includes(user.value?.role ?? "")) {
-    items.push({ label: "控制台", to: "/console" });
-  }
-  return items;
-});
+const navItems = computed(() => [
+  { label: "公告", to: "/announcements" },
+  { label: "漏洞", to: "/vulnerabilities" },
+  { label: "排行榜", to: "/leaderboard" },
+  { label: "控制台", to: "/console" },
+]);
 
 const userMenuItems = computed(() => {
   return user.value

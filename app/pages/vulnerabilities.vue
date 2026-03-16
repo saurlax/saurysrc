@@ -11,7 +11,10 @@ const columns = [
 </script>
 
 <template>
-  <UPageHeader title="漏洞" description="查看所有漏洞" />
-
-  <UTable :data="vulnerabilities" :columns="columns" empty="暂无漏洞" />
+  <UPage>
+    <UPageHeader title="漏洞" description="查看所有漏洞" />
+    <UPageBody>
+      <UTable :data="vulnerabilities" :columns="columns" empty="暂无漏洞" />
+    </UPageBody>
+  </UPage>
 </template>

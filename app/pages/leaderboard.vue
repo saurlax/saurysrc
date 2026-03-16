@@ -23,15 +23,18 @@ const teamColumns = [
 </script>
 
 <template>
-  <UPageHeader title="排行榜" description="查看当前用户与团队的积分排名" />
+  <UPage>
+    <UPageHeader title="排行榜" description="查看当前用户与团队的积分排名" />
+    <UPageBody>
+      <UTabs :items="tabs" default-value="users" variant="link">
+        <template #users>
+          <UTable :data="users" :columns="userColumns" empty="暂无数据" />
+        </template>
 
-  <UTabs :items="tabs" default-value="users" variant="link">
-    <template #users>
-      <UTable :data="users" :columns="userColumns" empty="暂无数据" />
-    </template>
-
-    <template #teams>
-      <UTable :data="teams" :columns="teamColumns" empty="暂无数据" />
-    </template>
-  </UTabs>
+        <template #teams>
+          <UTable :data="teams" :columns="teamColumns" empty="暂无数据" />
+        </template>
+      </UTabs>
+    </UPageBody>
+  </UPage>
 </template>

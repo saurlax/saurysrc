@@ -13,8 +13,11 @@ const posts = computed(
 </script>
 
 <template>
-  <UPageHeader title="公告" description="查看所有公告" />
-
-  <UBlogPosts v-if="posts.length" :posts="posts" />
-  <UEmpty v-else description="暂无公告" variant="naked" />
+  <UPage>
+    <UPageHeader title="公告" description="查看所有公告" />
+    <UPageBody>
+      <UBlogPosts v-if="posts.length" :posts="posts" />
+      <UEmpty v-else description="暂无公告" variant="naked" />
+    </UPageBody>
+  </UPage>
 </template>

@@ -3,7 +3,7 @@ import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui";
 import { z } from "zod";
 
 const { site } = useAppConfig();
-const { fetch } = useUserSession();
+const { user, fetch } = useUserSession();
 const toast = useToast();
 
 const fields: AuthFormField[] = [
@@ -23,9 +23,7 @@ const fields: AuthFormField[] = [
 
 const schema = z.object({
   email: z.email("Invalid email"),
-  password: z
-    .string("Password is required")
-    .min(8, "Must be at least 8 characters"),
+  password: z.string("Password is required"),
 });
 
 function login(payload: FormSubmitEvent<z.output<typeof schema>>) {
@@ -33,9 +31,8 @@ function login(payload: FormSubmitEvent<z.output<typeof schema>>) {
     method: "POST",
     body: payload.data,
   })
-    .then(() => {
-      fetch();
-      navigateTo("/");
+    .then(async () => {
+      await fetch();
     })
     .catch((err) => {
       toast.add({
@@ -48,11 +45,15 @@ function login(payload: FormSubmitEvent<z.output<typeof schema>>) {
 </script>
 
 <template>
-  <UAuthForm
-    class="max-w-md mx-auto mt-8"
-    :title="`登录到 ${site.title}`"
-    :fields="fields"
-    :schema="schema"
-    @submit="login"
-  />
+  <UPage>
+    <UPageBody>
+      <UAuthForm
+        class="max-w-md mx-auto"
+        :title="`登录到 ${site.title}`"
+        :fields="fields"
+        :schema="schema"
+        @submit="login"
+      />
+    </UPageBody>
+  </UPage>
 </template>
