@@ -2,6 +2,10 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 const { user } = useUserSession();
 
+if (!user.value) {
+  navigateTo("/login");
+}
+
 const navItems = computed(() => {
   const items: NavigationMenuItem[] = [
     { label: "数据看板", icon: "i-lucide-layout-dashboard", to: "/console" },
