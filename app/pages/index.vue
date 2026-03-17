@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const { site } = useAppConfig();
+const { t } = useI18n();
+
 const { data: announcements } = await useFetch("/api/announcements");
 const { data: vulnerabilities } = await useFetch("/api/vulnerabilities");
 
@@ -17,6 +20,18 @@ const vulnerabilityColumns = [
 <template>
   <UPage>
     <UPageBody>
+      <UPageCTA
+        :title="site.title"
+        :description="site.description"
+        orientation="horizontal"
+        variant="naked"
+      >
+        <template #links>
+          <UButton to="/console/vulnerabilities">提交漏洞</UButton>
+          <UButton to="/about" variant="outline">关于我们</UButton>
+        </template>
+        <Logo class="w-12" />
+      </UPageCTA>
       <UPageColumns class="lg:columns-2">
         <UPageCard title="最新公告" variant="naked">
           <template #actions>
@@ -56,7 +71,16 @@ const vulnerabilityColumns = [
               :data="vulnerabilities"
               :columns="vulnerabilityColumns"
               empty="暂无漏洞"
-            />
+            >
+              <template #severity-cell="{ getValue }">
+                <UBadge
+                  :color="t(`vulnerability.severityColor.${getValue()}`) as any"
+                  variant="subtle"
+                >
+                  {{ t(`vulnerability.severity.${getValue()}`) }}
+                </UBadge>
+              </template>
+            </UTable>
           </template>
         </UPageCard>
       </UPageColumns>
