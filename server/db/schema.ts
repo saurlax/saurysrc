@@ -130,6 +130,7 @@ export const vulnerabilities = pgTable(
     points: integer("points").notNull().default(0),
     description: text().notNull(),
     status: vulnerabilityStatus().notNull().default("draft"),
+    isPublic: boolean("is_public").notNull().default(false),
     advisory: text(),
     authorId: integer("author_id")
       .notNull()

@@ -3,13 +3,12 @@ import { db, schema } from "@nuxthub/db";
 import { eq } from "drizzle-orm";
 
 const bodySchema = z.object({
-  title: z.string().min(1, "标题不能为空"),
-  type: z.string().min(1, "类型不能为空"),
-  severity: z.enum(vulnerabilitySeverityEnum, { message: "请选择严重性" }),
+  title: z.string().min(1, "标题不能为空").optional(),
+  type: z.string().min(1, "类型不能为空").optional(),
+  severity: z.enum(vulnerabilitySeverityEnum, { message: "请选择严重性" }).optional(),
   unit: z.string().optional(),
   vendor: z.string().optional(),
-  points: z.number().min(0).optional(),
-  description: z.string().min(1, "描述不能为空"),
+  description: z.string().min(1, "描述不能为空").optional(),
   advisory: z.string().optional(),
 });
 
@@ -38,23 +37,30 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 403, statusMessage: "Forbidden" });
   }
 
+  if (existing.status !== "draft") {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Only draft vulnerabilities can be edited",
+    });
+  }
+
   const body = await readBody(event);
-  const { title, type, severity, unit, vendor, points, description, advisory } =
-    bodySchema.parse(body);
+  const parsed = bodySchema.parse(body);
+
+  const updateData = {
+    title: parsed.title,
+    type: parsed.type,
+    severity: parsed.severity,
+    unit: parsed.unit,
+    vendor: parsed.vendor,
+    description: parsed.description,
+    advisory: parsed.advisory,
+    updatedAt: new Date(),
+  };
 
   const [vulnerability] = await db
     .update(schema.vulnerabilities)
-    .set({
-      title,
-      type,
-      severity,
-      unit,
-      vendor,
-      points: points ?? 0,
-      description,
-      advisory,
-      updatedAt: new Date(),
-    })
+    .set(updateData)
     .where(eq(schema.vulnerabilities.id, id))
     .returning();
 

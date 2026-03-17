@@ -10,6 +10,7 @@ const columns = [
   { accessorKey: "title", header: "标题" },
   { accessorKey: "type", header: "类型" },
   { accessorKey: "severity", header: "严重性" },
+  { accessorKey: "isPublic", header: "是否公开" },
   { accessorKey: "status", header: "状态" },
   { accessorKey: "points", header: "积分" },
   { accessorKey: "createdAt", header: "创建时间" },
@@ -28,7 +29,6 @@ const schema = z.object({
   }),
   unit: z.string().optional(),
   vendor: z.string().optional(),
-  points: z.number().min(0).optional(),
   description: z.string().min(1, "描述不能为空"),
   advisory: z.string().optional(),
 });
@@ -40,7 +40,6 @@ const state = reactive<VulnerabilityForm>({
   severity: "low",
   unit: "",
   vendor: "",
-  points: 0,
   description: "",
   advisory: "",
 });
@@ -55,7 +54,6 @@ function openNewDrawer() {
     severity: "low",
     unit: "",
     vendor: "",
-    points: 0,
     description: "",
     advisory: "",
   });
@@ -70,7 +68,6 @@ function openEditDrawer(item: any) {
     severity: item.severity,
     unit: item.unit || "",
     vendor: item.vendor || "",
-    points: item.points || 0,
     description: item.description,
     advisory: item.advisory || "",
   });
@@ -144,11 +141,15 @@ const severityOptions = computed(() =>
             {{ t(`vulnerability.status.${getValue()}`) }}
           </UBadge>
         </template>
+        <template #isPublic-cell="{ getValue }">
+          {{ getValue() ? "是" : "否" }}
+        </template>
         <template #createdAt-cell="{ row }">
           {{ new Date(row.original.createdAt).toLocaleString() }}
         </template>
         <template #actions-cell="{ row }">
           <UButton
+            v-if="row.original.status === 'draft'"
             size="xs"
             icon="i-lucide-edit"
             variant="ghost"
@@ -163,6 +164,8 @@ const severityOptions = computed(() =>
       class="w-md"
       direction="right"
       :title="editingId ? '编辑漏洞' : '新建漏洞'"
+      :handle="false"
+      :handle-only="true"
     >
       <template #body>
         <UForm
@@ -208,15 +211,6 @@ const severityOptions = computed(() =>
               v-model="state.vendor"
               class="w-full"
               placeholder="厂商名称"
-            />
-          </UFormField>
-
-          <UFormField name="points" label="积分">
-            <UInput
-              v-model.number="state.points"
-              type="number"
-              class="w-full"
-              placeholder="预期积分"
             />
           </UFormField>
 

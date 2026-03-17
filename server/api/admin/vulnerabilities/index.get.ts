@@ -8,15 +8,7 @@ export default defineEventHandler(async (event) => {
   const offset = (page - 1) * limit;
 
   return db
-    .select({
-      id: schema.vulnerabilities.id,
-      title: schema.vulnerabilities.title,
-      type: schema.vulnerabilities.type,
-      severity: schema.vulnerabilities.severity,
-      status: schema.vulnerabilities.status,
-      points: schema.vulnerabilities.points,
-      createdAt: schema.vulnerabilities.createdAt,
-    })
+    .select()
     .from(schema.vulnerabilities)
     .orderBy(desc(schema.vulnerabilities.createdAt))
     .limit(limit)

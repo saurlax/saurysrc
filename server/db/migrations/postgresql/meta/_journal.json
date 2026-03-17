@@ -15,6 +15,13 @@
       "when": 1773642431152,
       "tag": "0001_slippery_toxin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773723756436,
+      "tag": "0002_tired_fenris",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,64 @@
+import { z } from "zod";
+import { db, schema } from "@nuxthub/db";
+import { eq } from "drizzle-orm";
+
+export default defineEventHandler(async (event) => {
+  const id = Number(event.context.params?.id);
+  if (!id) {
+    throw createError({ statusCode: 400, statusMessage: "Invalid id" });
+  }
+
+  const [existing] = await db
+    .select()
+    .from(schema.vulnerabilities)
+    .where(eq(schema.vulnerabilities.id, id));
+
+  if (!existing) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Vulnerability not found",
+    });
+  }
+
+  const body = await readBody(event);
+  const parsed = z
+    .object({
+      title: z.string().min(1, "标题不能为空").optional(),
+      type: z.string().min(1, "类型不能为空").optional(),
+      severity: z.enum(vulnerabilitySeverityEnum).optional(),
+      unit: z.string().optional(),
+      vendor: z.string().optional(),
+      points: z.number().min(0).optional(),
+      description: z.string().min(1, "描述不能为空").optional(),
+      advisory: z.string().optional(),
+      status: z.enum(vulnerabilityStatusEnum).optional(),
+      isPublic: z.boolean().optional(),
+    })
+    .parse(body);
+
+  const hasValidFields = Object.values(parsed).some((value) => value !== undefined);
+  if (!hasValidFields) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "No valid fields to update",
+    });
+  }
+
+  return db
+    .update(schema.vulnerabilities)
+    .set({
+      title: parsed.title,
+      type: parsed.type,
+      severity: parsed.severity,
+      unit: parsed.unit,
+      vendor: parsed.vendor,
+      points: parsed.points,
+      description: parsed.description,
+      advisory: parsed.advisory,
+      status: parsed.status,
+      isPublic: parsed.isPublic,
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.vulnerabilities.id, id))
+    .returning();
+});
