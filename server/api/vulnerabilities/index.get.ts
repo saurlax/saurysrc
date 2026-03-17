@@ -1,5 +1,5 @@
 import { db, schema } from "@nuxthub/db";
-import { desc, eq, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -7,11 +7,22 @@ export default defineEventHandler(async (event) => {
   const page = Math.max(Number(query.page ?? 1), 1);
   const offset = (page - 1) * limit;
 
-  return db
-    .select()
-    .from(schema.vulnerabilities)
-    .where(eq(schema.vulnerabilities.isPublic, true))
-    .orderBy(desc(schema.vulnerabilities.createdAt))
-    .limit(limit)
-    .offset(offset);
+  const rows = await db.query.vulnerabilities.findMany({
+    where: (vulnerabilities, { eq }) => eq(vulnerabilities.isPublic, true),
+    orderBy: (vulnerabilities, { desc }) => [desc(vulnerabilities.createdAt)],
+    limit,
+    offset,
+    with: {
+      author: {
+        columns: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  return rows.map((item) => ({
+    ...item,
+    authorName: item.author?.name,
+  }));
 });

@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { db, schema } from "@nuxthub/db";
-import { eq } from "drizzle-orm";
 
 const bodySchema = z.object({
   email: z.email(),
@@ -11,10 +10,9 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { email, password } = bodySchema.parse(body);
 
-  const [user] = await db
-    .select()
-    .from(schema.users)
-    .where(eq(schema.users.email, email));
+  const user = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+  });
 
   if (!user || !user.password || !(await verifyPassword(user.password, password))) {
     throw createError({

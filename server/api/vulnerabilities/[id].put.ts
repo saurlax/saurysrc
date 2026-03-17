@@ -21,10 +21,9 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if the vulnerability belongs to the user
-  const [existing] = await db
-    .select()
-    .from(schema.vulnerabilities)
-    .where(eq(schema.vulnerabilities.id, id));
+  const existing = await db.query.vulnerabilities.findFirst({
+    where: (vulnerabilities, { eq }) => eq(vulnerabilities.id, id),
+  });
 
   if (!existing) {
     throw createError({

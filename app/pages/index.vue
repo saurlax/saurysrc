@@ -13,6 +13,8 @@ const announcementColumns = [
 const vulnerabilityColumns = [
   { accessorKey: "title", header: "标题" },
   { accessorKey: "type", header: "类型" },
+  { accessorKey: "unit", header: "单位" },
+  { accessorKey: "authorName", header: "作者" },
   { accessorKey: "severity", header: "严重级别" },
 ];
 </script>

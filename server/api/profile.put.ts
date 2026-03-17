@@ -14,10 +14,12 @@ export default defineEventHandler(async (event) => {
   const { name, email } = bodySchema.parse(body);
 
   // 检查邮箱是否已被其他用户使用
-  const [existing] = await db
-    .select()
-    .from(schema.users)
-    .where(eq(schema.users.email, email));
+  const existing = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+    columns: {
+      id: true,
+    },
+  });
 
   if (existing && existing.id !== user.id) {
     throw createError({ statusCode: 400, statusMessage: "邮箱已被使用" });

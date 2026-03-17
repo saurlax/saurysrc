@@ -1,5 +1,4 @@
 import { db, schema } from "@nuxthub/db";
-import { desc } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -7,14 +6,20 @@ export default defineEventHandler(async (event) => {
   const page = Math.max(Number(query.page ?? 1), 1);
   const offset = (page - 1) * limit;
 
-  return db
-    .select({
-      id: schema.teams.id,
-      name: schema.teams.name,
-      points: schema.teams.pointsTotal,
-    })
-    .from(schema.teams)
-    .orderBy(desc(schema.teams.pointsTotal))
-    .limit(limit)
-    .offset(offset);
+  const rows = await db.query.teams.findMany({
+    columns: {
+      id: true,
+      name: true,
+      pointsTotal: true,
+    },
+    orderBy: (teams, { desc }) => [desc(teams.pointsTotal)],
+    limit,
+    offset,
+  });
+
+  return rows.map((item) => ({
+    id: item.id,
+    name: item.name,
+    points: item.pointsTotal,
+  }));
 });

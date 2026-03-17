@@ -1,5 +1,4 @@
 import { db, schema } from "@nuxthub/db";
-import { eq } from "drizzle-orm";
 
 function extractCasValue(xml: string, tags: string[]) {
   for (const tag of tags) {
@@ -43,10 +42,9 @@ export default defineEventHandler(async (event) => {
 
   const email = `${casUser}@cas.local`;
 
-  let [user] = await db
-    .select()
-    .from(schema.users)
-    .where(eq(schema.users.email, email));
+  let user = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+  });
 
   if (!user) {
     [user] = await db

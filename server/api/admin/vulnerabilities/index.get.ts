@@ -1,5 +1,4 @@
 import { db, schema } from "@nuxthub/db";
-import { desc } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -7,10 +6,9 @@ export default defineEventHandler(async (event) => {
   const page = Math.max(Number(query.page ?? 1), 1);
   const offset = (page - 1) * limit;
 
-  return db
-    .select()
-    .from(schema.vulnerabilities)
-    .orderBy(desc(schema.vulnerabilities.createdAt))
-    .limit(limit)
-    .offset(offset);
+  return db.query.vulnerabilities.findMany({
+    orderBy: (vulnerabilities, { desc }) => [desc(vulnerabilities.createdAt)],
+    limit,
+    offset,
+  });
 });

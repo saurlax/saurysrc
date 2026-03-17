@@ -8,10 +8,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Invalid id" });
   }
 
-  const [existing] = await db
-    .select()
-    .from(schema.vulnerabilities)
-    .where(eq(schema.vulnerabilities.id, id));
+  const existing = await db.query.vulnerabilities.findFirst({
+    where: (vulnerabilities, { eq }) => eq(vulnerabilities.id, id),
+  });
 
   if (!existing) {
     throw createError({

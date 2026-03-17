@@ -9,6 +9,7 @@ import {
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 /** Set the database name only when there are multiple words in the field,
  * such as `createdAt: timestamp("created_at")`,
@@ -146,3 +147,54 @@ export const vulnerabilities = pgTable(
     index("vulnerabilities_unit_idx").on(table.unit),
   ],
 );
+
+export const usersRelations = relations(users, ({ many }) => ({
+  announcements: many(announcements),
+  teamMembers: many(teamMembers),
+  pointTransactions: many(pointTransactions),
+  vulnerabilities: many(vulnerabilities),
+}));
+
+export const announcementsRelations = relations(announcements, ({ one }) => ({
+  author: one(users, {
+    fields: [announcements.authorId],
+    references: [users.id],
+  }),
+  team: one(teams, {
+    fields: [announcements.teamId],
+    references: [teams.id],
+  }),
+}));
+
+export const teamsRelations = relations(teams, ({ many }) => ({
+  announcements: many(announcements),
+  teamMembers: many(teamMembers),
+}));
+
+export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
+  team: one(teams, {
+    fields: [teamMembers.teamId],
+    references: [teams.id],
+  }),
+  user: one(users, {
+    fields: [teamMembers.userId],
+    references: [users.id],
+  }),
+}));
+
+export const pointTransactionsRelations = relations(
+  pointTransactions,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [pointTransactions.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const vulnerabilitiesRelations = relations(vulnerabilities, ({ one }) => ({
+  author: one(users, {
+    fields: [vulnerabilities.authorId],
+    references: [users.id],
+  }),
+}));
