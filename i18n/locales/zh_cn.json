@@ -3,12 +3,14 @@
     "severity": {
       "low": "低危",
       "medium": "中危",
-      "high": "高危"
+      "high": "高危",
+      "critical": "严重"
     },
     "severityColor": {
       "low": "neutral",
       "medium": "warning",
-      "high": "error"
+      "high": "error",
+      "critical": "error"
     },
     "status": {
       "draft": "草稿",

@@ -29,6 +29,13 @@
       "when": 1773725860337,
       "tag": "0003_flippant_the_hood",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1776657987811,
+      "tag": "0005_typical_secret_warriors",
+      "breakpoints": true
     }
   ]
 }

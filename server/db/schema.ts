@@ -39,6 +39,7 @@ export const vulnerabilitySeverity = pgEnum("vulnerability_severity", [
   "low",
   "medium",
   "high",
+  "critical",
 ]);
 
 export const vulnerabilityStatus = pgEnum("vulnerability_status", [

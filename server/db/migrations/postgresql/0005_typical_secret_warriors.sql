@@ -1,0 +1,1 @@
+ALTER TYPE "public"."vulnerability_severity" ADD VALUE 'critical';

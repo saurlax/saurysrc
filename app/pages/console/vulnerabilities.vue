@@ -45,6 +45,7 @@ const state = reactive<VulnerabilityForm>({
 });
 
 const toast = useToast();
+const submitting = ref(false);
 
 function openNewDrawer() {
   editingId.value = null;
@@ -74,32 +75,40 @@ function openEditDrawer(item: any) {
   openDrawer.value = true;
 }
 
-function submit() {
+async function submit() {
+  if (submitting.value) {
+    return;
+  }
+
+  submitting.value = true;
+
   const url = editingId.value
     ? `/api/vulnerabilities/${editingId.value}`
     : "/api/vulnerabilities";
   const method = editingId.value ? "PUT" : "POST";
 
-  $fetch(url, {
-    method,
-    body: state,
-  })
-    .then(async () => {
-      await refresh();
-      toast.add({
-        title: editingId.value ? "编辑成功" : "提交成功",
-        description: editingId.value ? "漏洞已更新" : "漏洞已提交审核",
-        color: "primary",
-      });
-      openDrawer.value = false;
-    })
-    .catch((error: any) => {
+  try {
+    await $fetch(url, {
+      method,
+      body: state,
+    });
+
+    await refresh();
+    toast.add({
+      title: editingId.value ? "编辑成功" : "提交成功",
+      description: editingId.value ? "漏洞已更新" : "漏洞已提交审核",
+      color: "primary",
+    });
+    openDrawer.value = false;
+  } catch (error: any) {
       toast.add({
         title: editingId.value ? "编辑失败" : "提交失败",
         description: error.data?.message || error.message || "未知错误",
         color: "error",
       });
-    });
+  } finally {
+    submitting.value = false;
+  }
 }
 
 function closeDrawer() {
@@ -182,11 +191,11 @@ const severityOptions = computed(() =>
             />
           </UFormField>
 
-          <UFormField name="type" label="类型" required>
+          <UFormField name="type" label="类型">
             <UInput
               v-model="state.type"
               class="w-full"
-              placeholder="漏洞类型"
+              placeholder="漏洞类型（可选）"
             />
           </UFormField>
 
@@ -236,7 +245,13 @@ const severityOptions = computed(() =>
             <UButton type="button" variant="ghost" @click="closeDrawer"
               >取消</UButton
             >
-            <UButton type="submit">{{ editingId ? "保存" : "提交" }}</UButton>
+            <UButton
+              type="submit"
+              :loading="submitting"
+              :color="submitting ? 'neutral' : 'primary'"
+            >
+              {{ editingId ? "保存" : "提交" }}
+            </UButton>
           </div>
         </UForm>
       </template>

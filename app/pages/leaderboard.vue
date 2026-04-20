@@ -1,38 +1,42 @@
 <script setup lang="ts">
 const { data } = await useFetch("/api/leaderboard");
 
-const users = computed(() => data.value?.users ?? []);
-const teams = computed(() => data.value?.teams ?? []);
+const points = computed(() => data.value?.points ?? []);
+const vulnerabilityCount = computed(() => data.value?.vulnerabilityCount ?? []);
 
 const tabs = computed(() => [
-  { label: "用户榜", value: "users", slot: "users" },
-  { label: "团队榜", value: "teams", slot: "teams" },
+  { label: "积分榜", value: "points", slot: "points" },
+  { label: "漏洞榜", value: "vulnerabilityCount", slot: "vulnerabilityCount" },
 ]);
 
-const userColumns = [
+const pointsColumns = [
   { accessorKey: "rank", header: "名次" },
   { accessorKey: "name", header: "用户名" },
   { accessorKey: "points", header: "积分" },
 ];
 
-const teamColumns = [
+const vulnerabilityCountColumns = [
   { accessorKey: "rank", header: "名次" },
-  { accessorKey: "name", header: "团队" },
-  { accessorKey: "points", header: "积分" },
+  { accessorKey: "name", header: "用户名" },
+  { accessorKey: "count", header: "漏洞数量" },
 ];
 </script>
 
 <template>
   <UPage>
-    <UPageHeader title="排行榜" description="查看当前用户与团队的积分排名" />
+    <UPageHeader title="排行榜" description="查看积分排名和漏洞数量排名" />
     <UPageBody>
-      <UTabs :items="tabs" default-value="users" variant="link">
-        <template #users>
-          <UTable :data="users" :columns="userColumns" empty="暂无数据" />
+      <UTabs :items="tabs" default-value="points" variant="link">
+        <template #points>
+          <UTable :data="points" :columns="pointsColumns" empty="暂无数据" />
         </template>
 
-        <template #teams>
-          <UTable :data="teams" :columns="teamColumns" empty="暂无数据" />
+        <template #vulnerabilityCount>
+          <UTable
+            :data="vulnerabilityCount"
+            :columns="vulnerabilityCountColumns"
+            empty="暂无数据"
+          />
         </template>
       </UTabs>
     </UPageBody>

@@ -14,3 +14,4 @@ This project is built with nuxt@4 + @nuxt/hub + @nuxt/ui + @nuxtjs/i18n + nuxt-a
 - Database operations use the Drizzle ORM provided by NuxtHub. The database schema is defined in `server/db/schema.ts`. Use `import { db, schema } from "@nuxthub/db"` to access it.
 - The backend directly returns the result returned by the database. For example, `return db.select().from(users).where(eq(users.id, userId))`.
 - When there are multiple sub-paths under a certain path, directories should be created first, and then the `index.xxx.ts` should be used.
+- Database migration files must be generated with `pnpm nuxt db generate`; do not handwrite migration SQL files.
