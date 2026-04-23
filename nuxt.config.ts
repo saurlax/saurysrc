@@ -24,6 +24,12 @@ export default defineNuxtConfig({
     "/console/**": { appLayout: "console" },
   },
   runtimeConfig: {
+    session: {
+      password: process.env.NUXT_SESSION_PASSWORD!,
+      cookie: {
+        secure: process.env.NUXT_SESSION_COOKIE_SECURE !== "false",
+      },
+    },
     public: {
       casBaseUrl: "https://sso.dlut.edu.cn/cas",
       casServiceUrl:
